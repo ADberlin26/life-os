@@ -3,10 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Life OS Safari-Prototyp: Informationen prüfen, bevor bestätigte Fakten ins persönliche SSOT übernommen werden.">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#111111">
-<title>Life OS — Safari V1.1</title>
+<title>Life OS — Safari-Prototyp</title>
 <style>
 :root{
   --bg:#f3f3ef;--card:#fff;--text:#161616;--muted:#6b6b66;--line:#d8d8d1;--accent:#111;
@@ -30,6 +31,7 @@ main{max-width:1100px;margin:auto;padding:16px}
 .kpi{font-size:34px;font-weight:900;line-height:1}.kpiLabel{font-size:12px;color:var(--muted);margin-top:4px}
 button,.button,input,textarea,select{font:inherit}
 button,.button{border:1px solid var(--accent);background:var(--accent);color:#fff;padding:12px 14px;border-radius:12px;font-weight:800;cursor:pointer}
+button,.button{min-height:44px}
 button.secondary,.button.secondary{background:#fff;color:var(--text);border-color:var(--line)}
 button.warn{background:var(--warn);border-color:var(--warn)}
 button.danger{background:var(--bad);border-color:var(--bad)}
@@ -52,14 +54,16 @@ nav.bottom button.active{background:#111;color:#fff}
 .flash{position:fixed;left:50%;transform:translateX(-50%);bottom:100px;background:#111;color:#fff;padding:10px 14px;border-radius:999px;font-weight:800;z-index:100;display:none}
 .hidden{display:none!important}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #2457d6;outline-offset:2px}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 @media(max-width:640px){.tabs{grid-template-columns:1fr 1fr}.two{grid-template-columns:1fr}.brand h1{font-size:20px}}
 </style>
 </head>
 <body>
 <header>
   <div class="head">
-    <div class="brand"><h1>Life OS</h1><div class="sub">Safari / iPad · Local-first · Shadow Mode</div></div>
-    <div class="badge">V1.1 SAFARI</div>
+    <div class="brand"><h1>Life OS</h1><div class="sub">Lokaler Prototyp · iPad / Safari · Shadow Mode</div></div>
+    <div class="badge">PROTOTYP</div>
   </div>
 </header>
 
@@ -72,16 +76,21 @@ nav.bottom button.active{background:#111;color:#fff}
     <div class="card"><div class="kpi" id="kpiEmails">0</div><div class="kpiLabel">E-Mail-Importe</div></div>
   </div>
 
+  <div class="card" role="note" aria-label="Prototyp und Datenschutz" style="margin-top:12px;border-color:#d9ad4c;background:#fff9e9">
+    <h2>Prototyp · nur Testdaten</h2>
+    <p>Die App speichert Eingaben im <b>localStorage dieses Browsers</b>. Das ist nicht verschlüsselt; exportierte Backups sind lesbare JSON-Dateien. Bitte keine echten persönlichen oder vertraulichen Daten eingeben.</p>
+  </div>
+
   <div class="card" style="margin-top:12px">
     <h2>Heute / nächste Schritte</h2>
-    <p class="muted">Alles bleibt lokal auf dem Gerät. Änderungen am SSOT brauchen deine Freigabe.</p>
+    <p class="muted">Vorschläge werden nicht automatisch als SSOT-Fakten gespeichert. Prüfe die Quelle vor jeder Freigabe.</p>
     <div id="radar" class="list"></div>
   </div>
 
   <div class="card" style="margin-top:12px">
     <h2>Was ist „Shadow Review“?</h2>
     <p><b>Ganz einfach:</b> Das Life OS darf etwas erkennen und vorschlagen, aber nicht ungefragt als Tatsache speichern.</p>
-    <p class="muted">Beispiel: In einer Mail steht „Interview am 29.09. um 11:30“. Das System legt daraus erst drei Vorschläge an: Termin-Datum, Termin-Uhrzeit und Bewerbungsstatus. Erst wenn du auf <b>Freigeben</b> tippst, wandern sie ins SSOT.</p>
+    <p class="muted">Demo: Eine Mail mit „Bewerbung“, „Vorstellungsgespräch“, Datum und Uhrzeit kann bis zu drei Vorschläge erzeugen: Termin-Datum, Termin-Uhrzeit und Bewerbungsstatus. Das ist einfache Mustererkennung, keine verlässliche Prüfung. Lies die Originalmail, bevor du etwas freigibst.</p>
     <div class="row">
       <button onclick="go('review')">Prüfen & Freigeben öffnen</button>
     </div>
@@ -101,7 +110,7 @@ nav.bottom button.active{background:#111;color:#fff}
 <section id="mail" class="page">
   <div class="card">
     <h2>E-Mail</h2>
-    <p class="muted">Importiere eine .eml-Datei oder kopiere Mailtext hinein. Der Inhalt bleibt <b>external_untrusted</b> und kann nichts ausführen.</p>
+    <p class="muted">Importiere eine .eml-Datei oder kopiere Mailtext hinein. Der Inhalt ist <b>external_untrusted</b> und erhält keine Befehlsautorität.</p>
 
     <label>.eml-Datei importieren</label>
     <input type="file" id="emlFile" accept=".eml,message/rfc822,text/plain" onchange="readEmlFile(event)">
@@ -124,7 +133,7 @@ nav.bottom button.active{background:#111;color:#fff}
 <section id="calendar" class="page">
   <div class="card">
     <h2>Kalender</h2>
-    <p class="muted">Importiert .ics-Dateien aus Apple/Google/Outlook oder legt Termine manuell an. Konflikte mit vorhandenen Terminen werden markiert.</p>
+    <p class="muted">Einfache .ics-Termine erscheinen nach dem Import in deiner lokalen Terminliste und werden als externe Vorschläge markiert. Erst eine Freigabe übernimmt einen Vorschlag ins SSOT. Zeitzonen und Terminüberschneidungen werden nicht berechnet; markiert wird nur dieselbe Startzeit am selben Datum.</p>
 
     <label>.ics-Datei importieren</label>
     <input type="file" id="icsFile" accept=".ics,text/calendar" onchange="readIcsFile(event)">
@@ -150,7 +159,7 @@ nav.bottom button.active{background:#111;color:#fff}
 <section id="review" class="page">
   <div class="card">
     <h2>Prüfen & Freigeben</h2>
-    <p class="muted"><b>Shadow Review</b> bedeutet: Vorschläge bleiben erst in einem sicheren Prüfbereich. Sie werden noch nicht als Wahrheit gespeichert. Hier kannst du sie freigeben, korrigieren oder verwerfen.</p>
+    <p class="muted"><b>Shadow Review</b> bedeutet: Vorschläge bleiben erst in einem Prüfbereich. Sie werden noch nicht als SSOT-Fakten gespeichert. Hier kannst du sie freigeben, korrigieren oder verwerfen.</p>
     <div id="candidateList" class="list"></div>
   </div>
 </section>
@@ -184,7 +193,7 @@ nav.bottom button.active{background:#111;color:#fff}
 
     <div class="card">
       <h2>Backup / Restore</h2>
-      <p class="muted">Kompletten lokalen Zustand sichern oder wiederherstellen.</p>
+      <p class="muted">Der Export enthält den kompletten lokalen Zustand als lesbare JSON-Datei. Bewahre ihn sicher auf. Importiere nur ein Backup, dem du vertraust.</p>
       <button onclick="exportBackup()">Backup herunterladen</button>
       <label>Backup importieren</label>
       <input type="file" accept=".json,application/json" onchange="importBackup(event)">
@@ -221,7 +230,7 @@ nav.bottom button.active{background:#111;color:#fff}
 </section>
 </main>
 
-<nav class="bottom">
+<nav class="bottom" aria-label="Hauptnavigation">
   <div class="inner">
     <button data-page="dashboard" class="active" onclick="go('dashboard')">Home</button>
     <button data-page="mail" onclick="go('mail')">E-Mail</button>
@@ -238,14 +247,36 @@ const KEY='lifeos_safari_v1';
 let state = loadState();
 
 function emptyState(){
-  return {facts:[],candidates:[],events:[],emails:[],audit:[],settings:{shadow:true},version:'1.1-safari'};
+  return {facts:[],candidates:[],events:[],emails:[],audit:[],settings:{shadow:true},version:'1.2-safari-review'};
+}
+function isRecord(x){return !!x&&typeof x==='object'&&!Array.isArray(x)}
+function safeText(x,max=10000){return typeof x==='string'?x.slice(0,max):x==null?'':String(x).slice(0,max)}
+function validDate(value){
+  const m=String(value||'').match(/^(\d{4})-(\d{2})-(\d{2})$/);if(!m)return false;
+  const d=new Date(`${m[1]}-${m[2]}-${m[3]}T00:00:00Z`);return Number.isFinite(d.getTime())&&d.toISOString().slice(0,10)===value;
+}
+function validTime(value){return value===''||/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(String(value))}
+function normalizeState(x){
+  if(!isRecord(x))return emptyState();
+  const arrays=['facts','candidates','events','emails','audit'];
+  if(!Array.isArray(x.facts)||!Array.isArray(x.candidates))throw new Error('Ungültige Sicherung');
+  for(const k of arrays)if(x[k]!==undefined&&!Array.isArray(x[k]))throw new Error('Ungültige Sicherung');
+  const rows=(key,shape)=>((x[key]||[]).filter(isRecord).map(shape));
+  return {
+    facts:rows('facts',f=>({id:safeText(f.id,160),subject:safeText(f.subject,500),predicate:safeText(f.predicate,200),value:safeText(f.value),domain:safeText(f.domain,100),source:safeText(f.source,500),trust:safeText(f.trust,80),confidence:Number.isFinite(Number(f.confidence))?Math.max(0,Math.min(1,Number(f.confidence))):0,confirmedAt:safeText(f.confirmedAt,80),state:safeText(f.state,40),revokedAt:safeText(f.revokedAt,80),supersedes:safeText(f.supersedes,160)})),
+    candidates:rows('candidates',c=>({id:safeText(c.id,160)||uid('cand'),source:safeText(c.source,500),trust:safeText(c.trust,80)||'external_untrusted',subject:safeText(c.subject,500)||'Unbekannt',predicate:safeText(c.predicate,200)||'unknown',value:safeText(c.value),domain:safeText(c.domain,100)||'general',confidence:Number.isFinite(Number(c.confidence))?Math.max(0,Math.min(1,Number(c.confidence))):0.5,freshness:safeText(c.freshness,10)||'F2',requiresVerification:!!c.requiresVerification,createdAt:safeText(c.createdAt,80)})),
+    events:rows('events',e=>{const date=safeText(e.date,40);return {id:safeText(e.id,160)||uid('evt'),title:safeText(e.title,500)||'Termin',location:safeText(e.location,500),date,time:validTime(safeText(e.time,20))?safeText(e.time,20):'',end:safeText(e.end,100),description:safeText(e.description),source:safeText(e.source,80),createdAt:safeText(e.createdAt,80),conflictWith:safeText(e.conflictWith,160),dateValid:validDate(date)}}),
+    emails:rows('emails',m=>({id:safeText(m.id,160)||uid('mail'),name:safeText(m.name,500),from:safeText(m.from,500),to:safeText(m.to,500),subject:safeText(m.subject,1000),body:safeText(m.body),date:safeText(m.date,100),trust:'external_untrusted',instructionAuthority:false,importedAt:safeText(m.importedAt,80)})),
+    audit:rows('audit',a=>({id:safeText(a.id,160),at:safeText(a.at,80),type:safeText(a.type,120),candidateId:safeText(a.candidateId,160),factId:safeText(a.factId,160),emailId:safeText(a.emailId,160),eventId:safeText(a.eventId,160),name:safeText(a.name,500),source:safeText(a.source,500),predicate:safeText(a.predicate,200),trust:safeText(a.trust,80),conflict:!!a.conflict})).slice(0,500),
+    settings:{shadow:true},version:'1.2-safari-review'
+  };
 }
 function loadState(){
-  try{const x=localStorage.getItem(KEY);return x?JSON.parse(x):emptyState()}catch(e){return emptyState()}
+  try{const x=localStorage.getItem(KEY);return x?normalizeState(JSON.parse(x)):emptyState()}catch(e){return emptyState()}
 }
 function saveState(){
-  localStorage.setItem(KEY,JSON.stringify(state));
-  renderAll();
+  try{localStorage.setItem(KEY,JSON.stringify(state));renderAll();return true}
+  catch(e){flash('Speichern fehlgeschlagen. Bitte erst ein Backup erstellen oder Daten reduzieren.');renderAll();return false}
 }
 function uid(p='id'){return p+'-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8)}
 function now(){return new Date().toISOString()}
@@ -316,41 +347,50 @@ function ingestMail(raw,name='manual'){
   state.emails.unshift(mail);
   extractFromMail(mail);
   audit('email_ingested',{emailId:mail.id,name,trust:'external_untrusted'});
-  saveState();flash('E-Mail analysiert');
+  if(saveState())flash('E-Mail analysiert und lokal gespeichert');
 }
 function ingestPastedMail(){const raw=document.getElementById('mailPaste').value.trim();if(!raw)return flash('Bitte Mailtext einfügen');ingestMail(raw,'paste')}
 function readEmlFile(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>ingestMail(String(r.result),f.name);r.readAsText(f)}
 
 function parseIcs(text){
-  const blocks=text.replace(/\r/g,'').split('BEGIN:VEVENT').slice(1).map(x=>x.split('END:VEVENT')[0]);
+  const unfolded=text.replace(/\r\n[ \t]/g,'').replace(/\n[ \t]/g,'').replace(/\r/g,'');
+  const blocks=unfolded.split('BEGIN:VEVENT').slice(1).map(x=>x.split('END:VEVENT')[0]);
   const out=[];
   for(const b of blocks){
     const get=(key)=>{const m=b.match(new RegExp('^'+key+'(?:;[^:]*)?:(.*)$','m'));return m?m[1].trim():''};
-    const summary=get('SUMMARY')||'Termin',loc=get('LOCATION'),dt=get('DTSTART'),end=get('DTEND'),desc=get('DESCRIPTION');
+    const unescapeIcs=s=>s.replace(/\\n/gi,'\n').replace(/\\([\\;,])/g,'$1');
+    const summary=unescapeIcs(get('SUMMARY')||'Termin'),loc=unescapeIcs(get('LOCATION')),dt=get('DTSTART'),end=get('DTEND'),desc=unescapeIcs(get('DESCRIPTION'));
     let date='',time='';
     const m=dt.match(/(\d{4})(\d{2})(\d{2})(?:T(\d{2})(\d{2}))?/);
     if(m){date=`${m[1]}-${m[2]}-${m[3]}`;if(m[4])time=`${m[4]}:${m[5]}`}
+    if(!validDate(date)||!validTime(time))continue;
     out.push({id:uid('evt'),title:summary,location:loc,date,time,end,description:desc,source:'ics',createdAt:now()});
   }
   return out;
 }
 function addEvent(e){
+  e.dateValid=validDate(e.date);
   const conflict=state.events.find(x=>x.date===e.date&&x.time===e.time&&x.time);
   e.conflictWith=conflict?conflict.id:null;
+  if(conflict)conflict.conflictWith=e.id;
   state.events.push(e);
   audit('calendar_event_added',{eventId:e.id,source:e.source||'manual',conflict:!!e.conflictWith});
-  addCandidate({source:'calendar:'+e.id,trust:'user',subject:e.title,predicate:'calendar_event',value:[e.date,e.time,e.location].filter(Boolean).join(' '),domain:'calendar',confidence:.95,freshness:'F3'});
+  const imported=e.source==='ics',demo=e.source==='demo',untrusted=imported||demo;
+  addCandidate({source:'calendar:'+e.id,trust:untrusted?'external_untrusted':'user',subject:e.title,predicate:'calendar_event',value:[e.date,e.time,e.location].filter(Boolean).join(' '),domain:'calendar',confidence:imported?0.7:demo?0.5:0.95,freshness:'F3',requiresVerification:untrusted});
 }
-function readIcsFile(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const events=parseIcs(String(r.result));events.forEach(addEvent);saveState();flash(events.length+' Termin(e) importiert')};r.readAsText(f)}
+function readIcsFile(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const events=parseIcs(String(r.result));events.forEach(addEvent);if(saveState())flash(events.length+' Termin(e) importiert und lokal gespeichert')};r.onerror=()=>flash('Datei konnte nicht gelesen werden');r.readAsText(f)}
 function addManualEvent(){
   const title=document.getElementById('eventTitle').value.trim(),date=document.getElementById('eventDate').value,time=document.getElementById('eventTime').value,location=document.getElementById('eventLocation').value.trim();
   if(!title||!date)return flash('Titel und Datum fehlen');
-  addEvent({id:uid('evt'),title,date,time,location,source:'manual',createdAt:now()});saveState();flash('Termin hinzugefügt')
+  addEvent({id:uid('evt'),title,date,time,location,source:'manual',createdAt:now()});if(saveState())flash('Termin lokal gespeichert')
 }
-function icsDate(date,time){return date.replaceAll('-','')+(time?'T'+time.replace(':','')+'00':'T000000')}
+function icsDate(date,time){if(!validDate(date)||!validTime(time||''))throw new Error('Ungültiges Datum oder Uhrzeit');return date.replaceAll('-','')+(time?'T'+time.replace(':','')+'00':'T000000')}
+function icsText(value){return String(value||'').replace(/\\/g,'\\\\').replace(/\r\n|\r|\n/g,'\\n').replace(/;/g,'\\;').replace(/,/g,'\\,')}
 function exportCalendar(){
   let s='BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//LifeOS//Safari//DE\r\n';
-  for(const e of state.events){s+=`BEGIN:VEVENT\r\nUID:${e.id}@lifeos\r\nDTSTART:${icsDate(e.date,e.time)}\r\nSUMMARY:${e.title.replace(/\n/g,' ')}\r\nLOCATION:${(e.location||'').replace(/\n/g,' ')}\r\nEND:VEVENT\r\n`}
+  const valid=state.events.filter(e=>validDate(e.date)&&validTime(e.time||''));
+  for(const e of valid){s+=`BEGIN:VEVENT\r\nUID:${icsText(e.id)}@lifeos\r\nDTSTART:${icsDate(e.date,e.time)}\r\nSUMMARY:${icsText(e.title)}\r\nLOCATION:${icsText(e.location)}\r\nEND:VEVENT\r\n`}
+  if(valid.length<state.events.length)flash((state.events.length-valid.length)+' Termin(e) mit ungültigem Datum/Uhrzeit ausgelassen');
   s+='END:VCALENDAR\r\n';downloadBlob('lifeos-calendar.ics','text/calendar',s)
 }
 
@@ -366,7 +406,7 @@ function approveCandidate(id){
   const fact={id:uid('fact'),subject:c.subject,predicate:c.predicate,value:c.value,domain:c.domain,source:c.source,trust:c.trust,confidence:c.confidence,confirmedAt:now(),supersedes:old&&String(old.value)!==String(c.value)?old.id:null};
   if(old&&String(old.value)!==String(c.value)){old.state='REVOKED';old.revokedAt=now()}
   state.facts.push(fact);state.candidates=state.candidates.filter(x=>x.id!==id);
-  audit('candidate_approved',{candidateId:id,factId:fact.id});saveState();flash('Ins SSOT übernommen')
+  audit('candidate_approved',{candidateId:id,factId:fact.id});if(saveState())flash('Ins SSOT übernommen')
 }
 function discardCandidate(id){state.candidates=state.candidates.filter(x=>x.id!==id);audit('candidate_discarded',{candidateId:id});saveState()}
 function editCandidate(id){
@@ -384,17 +424,18 @@ function redactText(){
 }
 function downloadBlob(name,type,text){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)}
 function exportBackup(){downloadBlob('lifeos-backup-'+new Date().toISOString().slice(0,10)+'.json','application/json',JSON.stringify(state,null,2))}
-function importBackup(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);if(!x||!Array.isArray(x.facts)||!Array.isArray(x.candidates))throw new Error();state=x;saveState();flash('Backup wiederhergestellt')}catch(e){flash('Ungültiges Backup')}};r.readAsText(f)}
+function importBackup(ev){const f=ev.target.files[0];if(!f)return;if(f.size>5*1024*1024){flash('Backup ist größer als 5 MB');ev.target.value='';return}const r=new FileReader();r.onload=()=>{const previous=state;try{state=normalizeState(JSON.parse(r.result));if(saveState())flash('Backup geprüft und lokal wiederhergestellt');else{state=previous;renderAll()}}catch(e){state=previous;renderAll();flash('Ungültiges oder beschädigtes Backup')}finally{ev.target.value=''}};r.onerror=()=>flash('Datei konnte nicht gelesen werden');r.readAsText(f)}
 function resetAll(){if(!confirm('Wirklich alle lokalen Life-OS-Daten auf diesem Gerät löschen?'))return;state=emptyState();localStorage.removeItem(KEY);saveState();flash('Lokale Daten gelöscht')}
 
 function seedDemo(){
+  if(state.emails.some(m=>m.name==='demo.eml')||state.events.some(e=>e.source==='demo'))return flash('Demo-Daten sind bereits geladen');
   const raw=`From: Recruiting Team <jobs@example.com>
 To: user@example.com
 Subject: Einladung zum Vorstellungsgespräch
 
 Vielen Dank für Ihre Bewerbung. Wir laden Sie zum Vorstellungsgespräch am 29.09.2026 um 11:30 Uhr in Berlin ein.`;
   ingestMail(raw,'demo.eml');
-  addEvent({id:uid('evt'),title:'Arzttermin',date:'2026-09-29',time:'11:30',location:'Berlin',source:'demo',createdAt:now()});
+  addEvent({id:uid('evt'),title:'Demo: Vorstellungsgespräch',date:'2026-09-29',time:'11:30',location:'Berlin',source:'demo',createdAt:now()});
   saveState();flash('Demo geladen')
 }
 
@@ -412,16 +453,17 @@ function renderMail(){
   document.getElementById('emailList').innerHTML=state.emails.map(m=>`<div class="item"><div class="itemTitle">${esc(m.subject)}</div><div class="meta">${esc(m.from)} · ${new Date(m.importedAt).toLocaleString()}</div><div><span class="pill amber">external_untrusted</span><span class="pill blue">no instruction authority</span></div></div>`).join('')||'<div class="item muted">Noch keine E-Mail importiert.</div>';
 }
 function renderCalendar(){
-  document.getElementById('calendarList').innerHTML=state.events.slice().sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time)).map(e=>`<div class="item"><div class="itemTitle">${esc(e.title)}</div><div class="meta">${esc(e.date)} ${esc(e.time||'')} · ${esc(e.location||'')}</div>${e.conflictWith?'<span class="pill red">Termin-Konflikt</span>':'<span class="pill green">kein Konflikt erkannt</span>'}</div>`).join('')||'<div class="item muted">Noch keine Termine.</div>';
+  document.getElementById('calendarList').innerHTML=state.events.slice().sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time)).map(e=>`<div class="item"><div class="itemTitle">${esc(e.title)}</div><div class="meta">${esc(e.date)} ${esc(e.time||'')} · ${esc(e.location||'')}</div>${!validDate(e.date)?'<span class="pill amber">Datum prüfen</span>':e.conflictWith?'<span class="pill red">Gleiche Startzeit</span>':'<span class="pill green">kein gleicher Startzeitpunkt gefunden</span>'}</div>`).join('')||'<div class="item muted">Noch keine Termine.</div>';
 }
 function renderReview(){
-  document.getElementById('candidateList').innerHTML=state.candidates.map(c=>{const r=candidateRisk(c);return `<div class="item"><div class="itemTitle">${esc(c.subject)} · ${esc(c.predicate)}</div><div style="margin:6px 0"><b>${esc(c.value)}</b></div><div><span class="pill ${r.level==='GREEN'?'green':'amber'}">${r.level}</span><span class="pill blue">${esc(c.trust)}</span></div><div class="meta">${esc(r.why)} · confidence ${Math.round(c.confidence*100)}%</div><div class="row" style="margin-top:10px"><button onclick="approveCandidate('${c.id}')">Freigeben</button><button class="secondary" onclick="editCandidate('${c.id}')">Korrigieren</button><button class="danger" onclick="discardCandidate('${c.id}')">Verwerfen</button></div></div>`}).join('')||'<div class="item muted">Keine offenen Vorschläge.</div>';
+  document.getElementById('candidateList').innerHTML=state.candidates.map(c=>{const r=candidateRisk(c);return `<div class="item"><div class="itemTitle">${esc(c.subject)} · ${esc(c.predicate)}</div><div style="margin:6px 0"><b>${esc(c.value)}</b></div><div><span class="pill ${r.level==='GREEN'?'green':'amber'}">${r.level}</span><span class="pill blue">${esc(c.trust)}</span></div><div class="meta">${esc(r.why)}</div><div class="row" style="margin-top:10px"><button data-action="approve" data-id="${esc(c.id)}">Freigeben</button><button class="secondary" data-action="edit" data-id="${esc(c.id)}">Korrigieren</button><button class="danger" data-action="discard" data-id="${esc(c.id)}">Verwerfen</button></div></div>`}).join('')||'<div class="item muted">Keine offenen Vorschläge.</div>';
 }
 function renderSSOT(){
   const active=state.facts.filter(f=>f.state!=='REVOKED');
   document.getElementById('factList').innerHTML=active.map(f=>`<div class="item"><div class="itemTitle">${esc(f.subject)} · ${esc(f.predicate)}</div><div style="margin-top:5px"><b>${esc(f.value)}</b></div><div class="meta">Quelle: ${esc(f.source)} · bestätigt ${new Date(f.confirmedAt).toLocaleString()}</div></div>`).join('')||'<div class="item muted">Noch keine freigegebenen Fakten.</div>';
 }
 function showAudit(){document.getElementById('auditBox').textContent=JSON.stringify(state.audit,null,2)}
+document.getElementById('candidateList').addEventListener('click',ev=>{const button=ev.target.closest('button[data-action][data-id]');if(!button)return;const id=button.dataset.id;({approve:approveCandidate,edit:editCandidate,discard:discardCandidate}[button.dataset.action]||(()=>{}))(id)});
 function renderAll(){renderDashboard();renderMail();renderCalendar();renderReview();renderSSOT()}
 renderAll();
 </script>
