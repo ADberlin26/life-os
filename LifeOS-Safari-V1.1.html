@@ -1,0 +1,429 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#111111">
+<title>Life OS — Safari V1.1</title>
+<style>
+:root{
+  --bg:#f3f3ef;--card:#fff;--text:#161616;--muted:#6b6b66;--line:#d8d8d1;--accent:#111;
+  --good:#1d6f42;--warn:#9a6700;--bad:#a12622;--blue:#2457d6;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",sans-serif}
+body{padding-bottom:90px}
+header{position:sticky;top:0;z-index:20;background:rgba(243,243,239,.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--line);padding:calc(env(safe-area-inset-top) + 12px) 16px 12px}
+.head{max-width:1100px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.brand h1{margin:0;font-size:23px}.brand .sub{font-size:12px;color:var(--muted)}
+.badge{font-size:12px;font-weight:800;border:1px solid var(--text);padding:6px 9px;border-radius:999px;white-space:nowrap}
+main{max-width:1100px;margin:auto;padding:16px}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+.tab{border:1px solid var(--line);background:var(--card);padding:11px;border-radius:12px;font-weight:800;color:var(--text)}
+.tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.page{display:none}.page.active{display:block}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 1px 0 rgba(0,0,0,.03)}
+.card h2,.card h3{margin:0 0 8px}.muted{color:var(--muted)}.small{font-size:12px}
+.kpi{font-size:34px;font-weight:900;line-height:1}.kpiLabel{font-size:12px;color:var(--muted);margin-top:4px}
+button,.button,input,textarea,select{font:inherit}
+button,.button{border:1px solid var(--accent);background:var(--accent);color:#fff;padding:12px 14px;border-radius:12px;font-weight:800;cursor:pointer}
+button.secondary,.button.secondary{background:#fff;color:var(--text);border-color:var(--line)}
+button.warn{background:var(--warn);border-color:var(--warn)}
+button.danger{background:var(--bad);border-color:var(--bad)}
+input,textarea,select{width:100%;border:1px solid var(--line);background:#fff;color:var(--text);padding:12px;border-radius:12px}
+textarea{min-height:120px;resize:vertical}
+label{display:block;font-size:12px;font-weight:800;margin:12px 0 6px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.row>*{flex:1 1 auto}
+.list{display:flex;flex-direction:column;gap:10px}
+.item{border:1px solid var(--line);border-radius:14px;padding:13px;background:#fff}
+.itemTitle{font-weight:900}.meta{font-size:12px;color:var(--muted);margin-top:4px}
+.pill{display:inline-block;font-size:11px;font-weight:900;padding:4px 7px;border-radius:999px;margin-right:4px}
+.pill.green{background:#e5f4eb;color:var(--good)}.pill.amber{background:#fff2cf;color:var(--warn)}.pill.red{background:#fde7e5;color:var(--bad)}.pill.blue{background:#e8eeff;color:var(--blue)}
+pre{white-space:pre-wrap;word-break:break-word;background:#111;color:#eee;border-radius:14px;padding:12px;font-size:12px;max-height:320px;overflow:auto}
+hr{border:0;border-top:1px solid var(--line);margin:16px 0}
+nav.bottom{position:fixed;left:0;right:0;bottom:0;z-index:30;background:rgba(255,255,255,.96);backdrop-filter:blur(16px);border-top:1px solid var(--line);padding:8px 10px calc(env(safe-area-inset-bottom) + 8px)}
+nav.bottom .inner{max-width:900px;margin:auto;display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+nav.bottom button{background:transparent;color:var(--muted);border:0;padding:8px 4px;font-size:11px;border-radius:10px}
+nav.bottom button.active{background:#111;color:#fff}
+.flash{position:fixed;left:50%;transform:translateX(-50%);bottom:100px;background:#111;color:#fff;padding:10px 14px;border-radius:999px;font-weight:800;z-index:100;display:none}
+.hidden{display:none!important}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:640px){.tabs{grid-template-columns:1fr 1fr}.two{grid-template-columns:1fr}.brand h1{font-size:20px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="head">
+    <div class="brand"><h1>Life OS</h1><div class="sub">Safari / iPad · Local-first · Shadow Mode</div></div>
+    <div class="badge">V1.1 SAFARI</div>
+  </div>
+</header>
+
+<main>
+<section id="dashboard" class="page active">
+  <div class="grid">
+    <div class="card"><div class="kpi" id="kpiFacts">0</div><div class="kpiLabel">SSOT-Fakten</div></div>
+    <div class="card"><div class="kpi" id="kpiCandidates">0</div><div class="kpiLabel">Offene Vorschläge</div></div>
+    <div class="card"><div class="kpi" id="kpiEvents">0</div><div class="kpiLabel">Kalender-Ereignisse</div></div>
+    <div class="card"><div class="kpi" id="kpiEmails">0</div><div class="kpiLabel">E-Mail-Importe</div></div>
+  </div>
+
+  <div class="card" style="margin-top:12px">
+    <h2>Heute / nächste Schritte</h2>
+    <p class="muted">Alles bleibt lokal auf dem Gerät. Änderungen am SSOT brauchen deine Freigabe.</p>
+    <div id="radar" class="list"></div>
+  </div>
+
+  <div class="card" style="margin-top:12px">
+    <h2>Was ist „Shadow Review“?</h2>
+    <p><b>Ganz einfach:</b> Das Life OS darf etwas erkennen und vorschlagen, aber nicht ungefragt als Tatsache speichern.</p>
+    <p class="muted">Beispiel: In einer Mail steht „Interview am 29.09. um 11:30“. Das System legt daraus erst drei Vorschläge an: Termin-Datum, Termin-Uhrzeit und Bewerbungsstatus. Erst wenn du auf <b>Freigeben</b> tippst, wandern sie ins SSOT.</p>
+    <div class="row">
+      <button onclick="go('review')">Prüfen & Freigeben öffnen</button>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:12px">
+    <h2>Schnelltest</h2>
+    <p>Damit du sofort siehst, wie das System arbeitet:</p>
+    <div class="row">
+      <button onclick="seedDemo()">Demo-Daten laden</button>
+      <button class="secondary" onclick="go('review')">Prüfen & Freigeben öffnen</button>
+      <button class="secondary" onclick="go('ssot')">SSOT öffnen</button>
+    </div>
+  </div>
+</section>
+
+<section id="mail" class="page">
+  <div class="card">
+    <h2>E-Mail</h2>
+    <p class="muted">Importiere eine .eml-Datei oder kopiere Mailtext hinein. Der Inhalt bleibt <b>external_untrusted</b> und kann nichts ausführen.</p>
+
+    <label>.eml-Datei importieren</label>
+    <input type="file" id="emlFile" accept=".eml,message/rfc822,text/plain" onchange="readEmlFile(event)">
+
+    <label>Oder Mailtext einfügen</label>
+    <textarea id="mailPaste" placeholder="Von: ...&#10;Betreff: ...&#10;&#10;Mailtext ..."></textarea>
+
+    <div class="row">
+      <button onclick="ingestPastedMail()">Mail analysieren</button>
+      <button class="secondary" onclick="document.getElementById('mailPaste').value=''">Leeren</button>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:12px">
+    <h3>Importierte E-Mails</h3>
+    <div id="emailList" class="list"></div>
+  </div>
+</section>
+
+<section id="calendar" class="page">
+  <div class="card">
+    <h2>Kalender</h2>
+    <p class="muted">Importiert .ics-Dateien aus Apple/Google/Outlook oder legt Termine manuell an. Konflikte mit vorhandenen Terminen werden markiert.</p>
+
+    <label>.ics-Datei importieren</label>
+    <input type="file" id="icsFile" accept=".ics,text/calendar" onchange="readIcsFile(event)">
+
+    <hr>
+    <h3>Termin manuell</h3>
+    <div class="two">
+      <div><label>Titel</label><input id="eventTitle" placeholder="z. B. Vorstellungsgespräch"></div>
+      <div><label>Ort</label><input id="eventLocation" placeholder="Berlin"></div>
+      <div><label>Datum</label><input id="eventDate" type="date"></div>
+      <div><label>Uhrzeit</label><input id="eventTime" type="time"></div>
+    </div>
+    <button style="margin-top:12px" onclick="addManualEvent()">Termin hinzufügen</button>
+    <button class="secondary" style="margin-top:12px" onclick="exportCalendar()">Kalender als .ics exportieren</button>
+  </div>
+
+  <div class="card" style="margin-top:12px">
+    <h3>Termine</h3>
+    <div id="calendarList" class="list"></div>
+  </div>
+</section>
+
+<section id="review" class="page">
+  <div class="card">
+    <h2>Prüfen & Freigeben</h2>
+    <p class="muted"><b>Shadow Review</b> bedeutet: Vorschläge bleiben erst in einem sicheren Prüfbereich. Sie werden noch nicht als Wahrheit gespeichert. Hier kannst du sie freigeben, korrigieren oder verwerfen.</p>
+    <div id="candidateList" class="list"></div>
+  </div>
+</section>
+
+<section id="ssot" class="page">
+  <div class="card">
+    <h2>SSOT</h2>
+    <p class="muted">Deine freigegebene persönliche Wahrheit. Konflikte werden nicht still überschrieben.</p>
+    <div id="factList" class="list"></div>
+  </div>
+
+  <div class="card" style="margin-top:12px">
+    <h3>Fakt manuell vorschlagen</h3>
+    <div class="two">
+      <div><label>Subjekt</label><input id="factSubject" placeholder="z. B. Divo"></div>
+      <div><label>Eigenschaft</label><input id="factPredicate" placeholder="z. B. birth_date"></div>
+    </div>
+    <label>Wert</label><input id="factValue">
+    <button style="margin-top:12px" onclick="manualCandidate()">Als Vorschlag anlegen</button>
+  </div>
+</section>
+
+<section id="more" class="page">
+  <div class="grid">
+    <div class="card">
+      <h2>Audit Log</h2>
+      <p class="muted">Nachvollziehbare lokale Historie.</p>
+      <button class="secondary" onclick="showAudit()">Audit anzeigen</button>
+      <pre id="auditBox">Noch nicht geladen.</pre>
+    </div>
+
+    <div class="card">
+      <h2>Backup / Restore</h2>
+      <p class="muted">Kompletten lokalen Zustand sichern oder wiederherstellen.</p>
+      <button onclick="exportBackup()">Backup herunterladen</button>
+      <label>Backup importieren</label>
+      <input type="file" accept=".json,application/json" onchange="importBackup(event)">
+    </div>
+
+    <div class="card">
+      <h2>Datenschutz</h2>
+      <p class="muted">E-Mail, Telefonnummern und IBANs in Texten lokal schwärzen.</p>
+      <textarea id="redactIn" placeholder="Text hier einfügen"></textarea>
+      <button onclick="redactText()">Schwärzen</button>
+      <pre id="redactOut"></pre>
+    </div>
+
+    <div class="card">
+      <h2>Verbindungen</h2>
+      <p class="muted">Lokale Safari-Version: E-Mail und Kalender funktionieren bereits per Import/Export. Für Live-Gmail und Live-Google-Kalender braucht die gehostete Version OAuth.</p>
+      <div class="list">
+        <div class="item"><div class="itemTitle">E-Mail lokal</div><div class="meta">.eml importieren oder Text einfügen · sofort nutzbar</div></div>
+        <div class="item"><div class="itemTitle">Kalender lokal</div><div class="meta">.ics importieren/exportieren · sofort nutzbar</div></div>
+        <div class="item"><div class="itemTitle">Live Gmail / Google Calendar</div><div class="meta">Backend + OAuth erforderlich · noch nicht verbunden</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>System</h2>
+      <div class="list">
+        <div class="item"><div class="itemTitle">Modus</div><div class="meta">SHADOW · kein automatisches SSOT-Schreiben</div></div>
+        <div class="item"><div class="itemTitle">Speicher</div><div class="meta">lokaler Safari-Speicher auf diesem Gerät</div></div>
+        <div class="item"><div class="itemTitle">Externe Inhalte</div><div class="meta">immer ohne instruction authority</div></div>
+      </div>
+      <button class="danger" style="margin-top:12px" onclick="resetAll()">Lokale Daten vollständig löschen</button>
+    </div>
+  </div>
+</section>
+</main>
+
+<nav class="bottom">
+  <div class="inner">
+    <button data-page="dashboard" class="active" onclick="go('dashboard')">Home</button>
+    <button data-page="mail" onclick="go('mail')">E-Mail</button>
+    <button data-page="calendar" onclick="go('calendar')">Kalender</button>
+    <button data-page="review" onclick="go('review')">Review</button>
+    <button data-page="more" onclick="go('more')">Mehr</button>
+  </div>
+</nav>
+
+<div class="flash" id="flash"></div>
+
+<script>
+const KEY='lifeos_safari_v1';
+let state = loadState();
+
+function emptyState(){
+  return {facts:[],candidates:[],events:[],emails:[],audit:[],settings:{shadow:true},version:'1.1-safari'};
+}
+function loadState(){
+  try{const x=localStorage.getItem(KEY);return x?JSON.parse(x):emptyState()}catch(e){return emptyState()}
+}
+function saveState(){
+  localStorage.setItem(KEY,JSON.stringify(state));
+  renderAll();
+}
+function uid(p='id'){return p+'-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8)}
+function now(){return new Date().toISOString()}
+function audit(type,data={}){state.audit.unshift({id:uid('audit'),at:now(),type,...data});state.audit=state.audit.slice(0,500)}
+function flash(msg){const el=document.getElementById('flash');el.textContent=msg;el.style.display='block';setTimeout(()=>el.style.display='none',1800)}
+function go(page){
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.getElementById(page).classList.add('active');
+  document.querySelectorAll('nav.bottom button').forEach(x=>x.classList.toggle('active',x.dataset.page===page));
+  window.scrollTo({top:0,behavior:'smooth'});
+  renderAll();
+}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+function conflictFor(candidate){
+  return state.facts.find(f=>f.subject.toLowerCase()===candidate.subject.toLowerCase() && f.predicate===candidate.predicate && String(f.value)!==String(candidate.value));
+}
+function addCandidate(c){
+  const candidate={id:uid('cand'),source:c.source||'manual',trust:c.trust||'user',subject:c.subject||'Unknown',predicate:c.predicate||'unknown',value:c.value||'',domain:c.domain||'general',confidence:c.confidence??0.7,freshness:c.freshness||'F2',requiresVerification:!!c.requiresVerification,createdAt:now()};
+  const dup=state.candidates.find(x=>x.subject===candidate.subject&&x.predicate===candidate.predicate&&String(x.value)===String(candidate.value));
+  if(!dup){state.candidates.push(candidate);audit('candidate_created',{candidateId:candidate.id,source:candidate.source,predicate:candidate.predicate})}
+}
+
+function parseHeadersAndBody(raw){
+  const lines=raw.replace(/\r/g,'').split('\n');
+  let headers={},body=[],inBody=false,lastKey=null;
+  for(const line of lines){
+    if(!inBody && line.trim()===''){inBody=true;continue}
+    if(!inBody){
+      if(/^\s/.test(line)&&lastKey){headers[lastKey]+=' '+line.trim();continue}
+      const m=line.match(/^([^:]+):\s*(.*)$/);
+      if(m){lastKey=m[1].trim().toLowerCase();headers[lastKey]=m[2].trim()}
+    }else body.push(line);
+  }
+  if(Object.keys(headers).length===0){
+    return {from:'',to:'',subject:'',body:raw};
+  }
+  return {from:headers.from||'',to:headers.to||'',subject:headers.subject||'',date:headers.date||'',body:body.join('\n').trim()};
+}
+function extractFromMail(mail){
+  const text=((mail.subject||'')+'\n'+(mail.body||'')).replace(/\s+/g,' ');
+  const lower=text.toLowerCase();
+  let subject=mail.from||'external_contact';
+
+  const date1=text.match(/\b(\d{2}\.\d{2}\.\d{4})\b/);
+  const date2=text.match(/\b(\d{4}-\d{2}-\d{2})\b/);
+  const time=text.match(/\b([01]?\d|2[0-3])[:.](\d{2})\b/);
+
+  const appointmentWords=['vorstellungsgespräch','interview','termin','appointment','einladung'];
+  const applicationWords=['bewerbung','application','stelle','position','job'];
+
+  if(appointmentWords.some(k=>lower.includes(k))){
+    if(date1||date2) addCandidate({source:'email:'+mail.id,trust:'external_untrusted',subject,predicate:'appointment_date',value:(date1||date2)[1],domain:'calendar',confidence:.82,freshness:'F3',requiresVerification:true});
+    if(time) addCandidate({source:'email:'+mail.id,trust:'external_untrusted',subject,predicate:'appointment_time',value:String(time[1]).padStart(2,'0')+':'+time[2],domain:'calendar',confidence:.82,freshness:'F3',requiresVerification:true});
+  }
+  if(applicationWords.some(k=>lower.includes(k))){
+    let status='';
+    if(['einladung','interview','vorstellungsgespräch'].some(k=>lower.includes(k))) status='INTERVIEW_INVITED';
+    else if(['absage','leider','rejected','unfortunately'].some(k=>lower.includes(k))) status='REJECTED_OR_NEGATIVE';
+    else if(['erhalten','eingegangen','received'].some(k=>lower.includes(k))) status='APPLICATION_RECEIVED';
+    if(status) addCandidate({source:'email:'+mail.id,trust:'external_untrusted',subject,predicate:'application_status',value:status,domain:'jobs',confidence:.75,freshness:'F3'});
+  }
+}
+
+function ingestMail(raw,name='manual'){
+  const parsed=parseHeadersAndBody(raw);
+  const mail={id:uid('mail'),name,from:parsed.from||'unknown',to:parsed.to||'',subject:parsed.subject||'(kein Betreff)',body:parsed.body||raw,date:parsed.date||'',trust:'external_untrusted',instructionAuthority:false,importedAt:now()};
+  state.emails.unshift(mail);
+  extractFromMail(mail);
+  audit('email_ingested',{emailId:mail.id,name,trust:'external_untrusted'});
+  saveState();flash('E-Mail analysiert');
+}
+function ingestPastedMail(){const raw=document.getElementById('mailPaste').value.trim();if(!raw)return flash('Bitte Mailtext einfügen');ingestMail(raw,'paste')}
+function readEmlFile(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>ingestMail(String(r.result),f.name);r.readAsText(f)}
+
+function parseIcs(text){
+  const blocks=text.replace(/\r/g,'').split('BEGIN:VEVENT').slice(1).map(x=>x.split('END:VEVENT')[0]);
+  const out=[];
+  for(const b of blocks){
+    const get=(key)=>{const m=b.match(new RegExp('^'+key+'(?:;[^:]*)?:(.*)$','m'));return m?m[1].trim():''};
+    const summary=get('SUMMARY')||'Termin',loc=get('LOCATION'),dt=get('DTSTART'),end=get('DTEND'),desc=get('DESCRIPTION');
+    let date='',time='';
+    const m=dt.match(/(\d{4})(\d{2})(\d{2})(?:T(\d{2})(\d{2}))?/);
+    if(m){date=`${m[1]}-${m[2]}-${m[3]}`;if(m[4])time=`${m[4]}:${m[5]}`}
+    out.push({id:uid('evt'),title:summary,location:loc,date,time,end,description:desc,source:'ics',createdAt:now()});
+  }
+  return out;
+}
+function addEvent(e){
+  const conflict=state.events.find(x=>x.date===e.date&&x.time===e.time&&x.time);
+  e.conflictWith=conflict?conflict.id:null;
+  state.events.push(e);
+  audit('calendar_event_added',{eventId:e.id,source:e.source||'manual',conflict:!!e.conflictWith});
+  addCandidate({source:'calendar:'+e.id,trust:'user',subject:e.title,predicate:'calendar_event',value:[e.date,e.time,e.location].filter(Boolean).join(' '),domain:'calendar',confidence:.95,freshness:'F3'});
+}
+function readIcsFile(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{const events=parseIcs(String(r.result));events.forEach(addEvent);saveState();flash(events.length+' Termin(e) importiert')};r.readAsText(f)}
+function addManualEvent(){
+  const title=document.getElementById('eventTitle').value.trim(),date=document.getElementById('eventDate').value,time=document.getElementById('eventTime').value,location=document.getElementById('eventLocation').value.trim();
+  if(!title||!date)return flash('Titel und Datum fehlen');
+  addEvent({id:uid('evt'),title,date,time,location,source:'manual',createdAt:now()});saveState();flash('Termin hinzugefügt')
+}
+function icsDate(date,time){return date.replaceAll('-','')+(time?'T'+time.replace(':','')+'00':'T000000')}
+function exportCalendar(){
+  let s='BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//LifeOS//Safari//DE\r\n';
+  for(const e of state.events){s+=`BEGIN:VEVENT\r\nUID:${e.id}@lifeos\r\nDTSTART:${icsDate(e.date,e.time)}\r\nSUMMARY:${e.title.replace(/\n/g,' ')}\r\nLOCATION:${(e.location||'').replace(/\n/g,' ')}\r\nEND:VEVENT\r\n`}
+  s+='END:VCALENDAR\r\n';downloadBlob('lifeos-calendar.ics','text/calendar',s)
+}
+
+function candidateRisk(c){
+  if(c.requiresVerification||c.freshness==='F4') return {level:'AMBER',why:'Aktuelle/primäre Verifikation empfohlen'};
+  if(conflictFor(c)) return {level:'AMBER',why:'Konflikt mit bestehendem SSOT'};
+  if(c.trust==='external_untrusted') return {level:'AMBER',why:'Externe Quelle — nur Daten, keine Befehlsautorität'};
+  return {level:'GREEN',why:'Kein Konflikt erkannt'};
+}
+function approveCandidate(id){
+  const c=state.candidates.find(x=>x.id===id);if(!c)return;
+  const old=state.facts.find(f=>f.subject.toLowerCase()===c.subject.toLowerCase()&&f.predicate===c.predicate);
+  const fact={id:uid('fact'),subject:c.subject,predicate:c.predicate,value:c.value,domain:c.domain,source:c.source,trust:c.trust,confidence:c.confidence,confirmedAt:now(),supersedes:old&&String(old.value)!==String(c.value)?old.id:null};
+  if(old&&String(old.value)!==String(c.value)){old.state='REVOKED';old.revokedAt=now()}
+  state.facts.push(fact);state.candidates=state.candidates.filter(x=>x.id!==id);
+  audit('candidate_approved',{candidateId:id,factId:fact.id});saveState();flash('Ins SSOT übernommen')
+}
+function discardCandidate(id){state.candidates=state.candidates.filter(x=>x.id!==id);audit('candidate_discarded',{candidateId:id});saveState()}
+function editCandidate(id){
+  const c=state.candidates.find(x=>x.id===id);if(!c)return;
+  const v=prompt('Neuer Wert:',c.value);if(v===null)return;c.value=v;audit('candidate_corrected',{candidateId:id});saveState()
+}
+function manualCandidate(){const subject=document.getElementById('factSubject').value.trim(),predicate=document.getElementById('factPredicate').value.trim(),value=document.getElementById('factValue').value.trim();if(!subject||!predicate||!value)return flash('Bitte alle Felder ausfüllen');addCandidate({source:'manual',trust:'user',subject,predicate,value,confidence:1,freshness:'F0'});saveState();go('review')}
+
+function redactText(){
+  let t=document.getElementById('redactIn').value;
+  t=t.replace(/[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}/g,'[REDACTED_EMAIL]');
+  t=t.replace(/\b[A-Z]{2}\d{2}[A-Z0-9]{10,30}\b/g,'[REDACTED_IBAN]');
+  t=t.replace(/(?:\+?\d[\d\s()./-]{6,}\d)/g,'[REDACTED_PHONE]');
+  document.getElementById('redactOut').textContent=t;
+}
+function downloadBlob(name,type,text){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)}
+function exportBackup(){downloadBlob('lifeos-backup-'+new Date().toISOString().slice(0,10)+'.json','application/json',JSON.stringify(state,null,2))}
+function importBackup(ev){const f=ev.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{const x=JSON.parse(r.result);if(!x||!Array.isArray(x.facts)||!Array.isArray(x.candidates))throw new Error();state=x;saveState();flash('Backup wiederhergestellt')}catch(e){flash('Ungültiges Backup')}};r.readAsText(f)}
+function resetAll(){if(!confirm('Wirklich alle lokalen Life-OS-Daten auf diesem Gerät löschen?'))return;state=emptyState();localStorage.removeItem(KEY);saveState();flash('Lokale Daten gelöscht')}
+
+function seedDemo(){
+  const raw=`From: Recruiting Team <jobs@example.com>
+To: user@example.com
+Subject: Einladung zum Vorstellungsgespräch
+
+Vielen Dank für Ihre Bewerbung. Wir laden Sie zum Vorstellungsgespräch am 29.09.2026 um 11:30 Uhr in Berlin ein.`;
+  ingestMail(raw,'demo.eml');
+  addEvent({id:uid('evt'),title:'Arzttermin',date:'2026-09-29',time:'11:30',location:'Berlin',source:'demo',createdAt:now()});
+  saveState();flash('Demo geladen')
+}
+
+function renderDashboard(){
+  document.getElementById('kpiFacts').textContent=state.facts.filter(f=>f.state!=='REVOKED').length;
+  document.getElementById('kpiCandidates').textContent=state.candidates.length;
+  document.getElementById('kpiEvents').textContent=state.events.length;
+  document.getElementById('kpiEmails').textContent=state.emails.length;
+  const radar=[];
+  state.candidates.slice(0,3).forEach(c=>radar.push(`<div class="item"><div class="itemTitle">Review: ${esc(c.subject)} · ${esc(c.predicate)}</div><div class="meta">${esc(c.value)}</div></div>`));
+  state.events.slice().sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time)).slice(0,3).forEach(e=>radar.push(`<div class="item"><div class="itemTitle">${esc(e.title)}</div><div class="meta">${esc(e.date)} ${esc(e.time||'')} ${esc(e.location||'')}</div></div>`));
+  document.getElementById('radar').innerHTML=radar.join('')||'<div class="item muted">Noch nichts offen.</div>';
+}
+function renderMail(){
+  document.getElementById('emailList').innerHTML=state.emails.map(m=>`<div class="item"><div class="itemTitle">${esc(m.subject)}</div><div class="meta">${esc(m.from)} · ${new Date(m.importedAt).toLocaleString()}</div><div><span class="pill amber">external_untrusted</span><span class="pill blue">no instruction authority</span></div></div>`).join('')||'<div class="item muted">Noch keine E-Mail importiert.</div>';
+}
+function renderCalendar(){
+  document.getElementById('calendarList').innerHTML=state.events.slice().sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time)).map(e=>`<div class="item"><div class="itemTitle">${esc(e.title)}</div><div class="meta">${esc(e.date)} ${esc(e.time||'')} · ${esc(e.location||'')}</div>${e.conflictWith?'<span class="pill red">Termin-Konflikt</span>':'<span class="pill green">kein Konflikt erkannt</span>'}</div>`).join('')||'<div class="item muted">Noch keine Termine.</div>';
+}
+function renderReview(){
+  document.getElementById('candidateList').innerHTML=state.candidates.map(c=>{const r=candidateRisk(c);return `<div class="item"><div class="itemTitle">${esc(c.subject)} · ${esc(c.predicate)}</div><div style="margin:6px 0"><b>${esc(c.value)}</b></div><div><span class="pill ${r.level==='GREEN'?'green':'amber'}">${r.level}</span><span class="pill blue">${esc(c.trust)}</span></div><div class="meta">${esc(r.why)} · confidence ${Math.round(c.confidence*100)}%</div><div class="row" style="margin-top:10px"><button onclick="approveCandidate('${c.id}')">Freigeben</button><button class="secondary" onclick="editCandidate('${c.id}')">Korrigieren</button><button class="danger" onclick="discardCandidate('${c.id}')">Verwerfen</button></div></div>`}).join('')||'<div class="item muted">Keine offenen Vorschläge.</div>';
+}
+function renderSSOT(){
+  const active=state.facts.filter(f=>f.state!=='REVOKED');
+  document.getElementById('factList').innerHTML=active.map(f=>`<div class="item"><div class="itemTitle">${esc(f.subject)} · ${esc(f.predicate)}</div><div style="margin-top:5px"><b>${esc(f.value)}</b></div><div class="meta">Quelle: ${esc(f.source)} · bestätigt ${new Date(f.confirmedAt).toLocaleString()}</div></div>`).join('')||'<div class="item muted">Noch keine freigegebenen Fakten.</div>';
+}
+function showAudit(){document.getElementById('auditBox').textContent=JSON.stringify(state.audit,null,2)}
+function renderAll(){renderDashboard();renderMail();renderCalendar();renderReview();renderSSOT()}
+renderAll();
+</script>
+</body>
+</html>
